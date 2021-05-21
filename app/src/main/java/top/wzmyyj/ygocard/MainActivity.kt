@@ -2,6 +2,7 @@ package top.wzmyyj.ygocard
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
 import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
