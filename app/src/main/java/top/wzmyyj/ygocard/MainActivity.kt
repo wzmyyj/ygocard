@@ -12,5 +12,6 @@ class MainActivity : AppCompatActivity() {
 
         val tvDesc = findViewById<TextView>(R.id.tv_desc)
         tvDesc.textScaleX = 0.7f
+        assets
     }
 }

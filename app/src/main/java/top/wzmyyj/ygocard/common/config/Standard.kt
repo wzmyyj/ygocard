@@ -28,7 +28,7 @@ object Standard {
     }
 
     object Arrows {
-        val center = intArrayOf(407, 526)
+        val center = intArrayOf(406, 525)
         val arrow1_size = intArrayOf(140, 41)
         val arrow1_position = intArrayOf(-70, 308)
         val arrow2_size = intArrayOf(70, 70)
@@ -92,7 +92,7 @@ object Standard {
         const val font = "name"
         const val fontSize = 65
         const val maxWidth = 610
-        val position = intArrayOf(65, 96)
+        val position = intArrayOf(65, 117)
     }
 
     object MonsterDesc {

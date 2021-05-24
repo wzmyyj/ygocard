@@ -1,22 +1,29 @@
 package top.wzmyyj.ygocard.common.weight
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.text.TextPaint
 import android.util.AttributeSet
-import androidx.appcompat.widget.*
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import top.wzmyyj.ygocard.R
 import top.wzmyyj.ygocard.common.config.Standard
 import top.wzmyyj.ygocard.common.config.Standard.Arrows
 import top.wzmyyj.ygocard.common.config.Standard.Attribute
+import top.wzmyyj.ygocard.common.config.Standard.CardBag
+import top.wzmyyj.ygocard.common.config.Standard.Copyright
+import top.wzmyyj.ygocard.common.config.Standard.Holo
+import top.wzmyyj.ygocard.common.config.Standard.Name
+import top.wzmyyj.ygocard.common.config.Standard.Password
 import top.wzmyyj.ygocard.common.config.Standard.Star
 import top.wzmyyj.ygocard.common.config.Standard.moldSize
 import top.wzmyyj.ygocard.common.data.CardInfo
 import kotlin.math.roundToInt
+
 
 /**
  * Created on 2021/05/18.
@@ -45,9 +52,49 @@ class YgoCardView : AppCompatImageView {
 
     fun getCardInfo() = info
 
-    fun Int.d(): Int {
+    private fun Int.d(): Int {
         return (this * scaleD).roundToInt()
     }
+
+    private fun Int.f(): Float {
+        return this * scaleD
+    }
+
+    private fun Float.f(): Float {
+        return this * scaleD
+    }
+
+    private val fd by lazy { ContextCompat.getDrawable(context, R.drawable.c_f_monster_lj)!! }
+    private val ad by lazy { ContextCompat.getDrawable(context, R.drawable.c_a_cn_light)!! }
+
+    private val level by lazy { ContextCompat.getDrawable(context, R.drawable.c_star_level)!! }
+    private val rank by lazy { ContextCompat.getDrawable(context, R.drawable.c_star_rank)!! }
+
+    private val arrow10 by lazy { ContextCompat.getDrawable(context, R.drawable.c_arrow1_0)!! }
+    private val arrow11 by lazy { ContextCompat.getDrawable(context, R.drawable.c_arrow1_1)!! }
+    private val arrow20 by lazy { ContextCompat.getDrawable(context, R.drawable.c_arrow2_0)!! }
+    private val arrow21 by lazy { ContextCompat.getDrawable(context, R.drawable.c_arrow2_1)!! }
+
+    private val holo by lazy { ContextCompat.getDrawable(context, R.drawable.c_holo_black)!! }
+
+    private val nameTf by lazy { Typeface.createFromAsset(resources.assets, "fonts/cn.ttf") }
+    private val passwordTf by lazy {
+        Typeface.createFromAsset(
+            resources.assets,
+            "fonts/password.ttf"
+        )
+    }
+    private val copyrightTf by lazy {
+        Typeface.createFromAsset(
+            resources.assets,
+            "fonts/copyright.ttf"
+        )
+    }
+
+    private val namePaint = Paint()
+    private val passwordPaint = Paint()
+    private val bagPaint = Paint()
+    private val copyrightPaint = Paint()
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = MeasureSpec.getSize(widthMeasureSpec)
@@ -73,6 +120,12 @@ class YgoCardView : AppCompatImageView {
 
     private fun drawCard(canvas: Canvas, info: CardInfo) {
         drawMonster(canvas, info)
+
+
+        drawBag(canvas, info)
+        drawPassword(canvas, info)
+        drawCopyright(canvas, info)
+        drawHolo(canvas, info)
     }
 
     /**
@@ -80,6 +133,7 @@ class YgoCardView : AppCompatImageView {
      */
     private fun drawMonster(canvas: Canvas, info: CardInfo) {
         drawFrame(canvas, info)
+        drawName(canvas, info)
         drawAttribute(canvas, info)
         drawLevel(canvas, info)
         drawRank(canvas, info)
@@ -100,18 +154,6 @@ class YgoCardView : AppCompatImageView {
 
     }
 
-    private val paint = Paint()
-    private val fd by lazy { ContextCompat.getDrawable(context, R.drawable.c_f_monster_lj)!! }
-    private val ad by lazy { ContextCompat.getDrawable(context, R.drawable.c_a_cn_dark)!! }
-
-    private val level by lazy { ContextCompat.getDrawable(context, R.drawable.c_star_level)!! }
-    private val rank by lazy { ContextCompat.getDrawable(context, R.drawable.c_star_rank)!! }
-
-    private val arrow10 by lazy { ContextCompat.getDrawable(context, R.drawable.c_arrow1_0)!! }
-    private val arrow11 by lazy { ContextCompat.getDrawable(context, R.drawable.c_arrow1_1)!! }
-    private val arrow20 by lazy { ContextCompat.getDrawable(context, R.drawable.c_arrow2_0)!! }
-    private val arrow21 by lazy { ContextCompat.getDrawable(context, R.drawable.c_arrow2_1)!! }
-
     /**
      * 绘制框框。
      */
@@ -125,7 +167,31 @@ class YgoCardView : AppCompatImageView {
      * 绘制名称。
      */
     private fun drawName(canvas: Canvas, info: CardInfo) {
-
+        val name = "雙穹之騎士 阿斯特拉姆"
+        val typeface = nameTf
+        val textPaint = namePaint
+        val pos = Name.position
+        val size = Name.fontSize.f()
+        val maxW = Name.maxWidth.f()
+        val x = pos[0].f()
+        val y = pos[1].f()
+        textPaint.color = Color.WHITE
+        textPaint.textSize = size
+        textPaint.typeface = typeface
+        textPaint.isAntiAlias = true
+        val w = textPaint.measureText(name)
+        if (w > maxW) {
+            val scaleX = (maxW * 100 / w) / 100f
+            textPaint.textScaleX = scaleX
+        }
+        canvas.drawText(name, x, y, textPaint)
+        if (info.y > 0) {
+            textPaint.strokeWidth = 1.f()
+            textPaint.color = Color.GRAY
+            textPaint.style = Paint.Style.STROKE
+            canvas.drawText(name, x, y, textPaint)
+        }
+        textPaint.reset()
     }
 
     /**
@@ -145,7 +211,8 @@ class YgoCardView : AppCompatImageView {
      * 绘制等级。
      */
     private fun drawLevel(canvas: Canvas, info: CardInfo) {
-        val lv = 0
+        if (info.i == 0) return
+        val lv = 4
         if (lv > 13 || lv <= 0) return
         val levelDrawable = level
         val pos = Star.position
@@ -164,7 +231,8 @@ class YgoCardView : AppCompatImageView {
      * 绘制阶级。
      */
     private fun drawRank(canvas: Canvas, info: CardInfo) {
-        val rk = 0
+        if (info.i == 0) return
+        val rk = 4
         if (rk > 13 || rk <= 0) return
         val rankDrawable = rank
         val pos = Star.position
@@ -189,7 +257,6 @@ class YgoCardView : AppCompatImageView {
         val arrow20Drawable = arrow20
         val arrow21Drawable = arrow21
         for ((i, v) in arr.withIndex()) {
-//            if (i != 0) continue
             var pos: IntArray
             var size: IntArray
             var d: Drawable
@@ -206,8 +273,8 @@ class YgoCardView : AppCompatImageView {
             val right = pos[0] + size[0]
             val bottom = pos[1] + size[1]
             d.setBounds(pos[0].d(), pos[1].d(), right.d(), bottom.d())
-            val c0 = center[0].d().toFloat()
-            val c1 = center[1].d().toFloat()
+            val c0 = (center[0] + 0.5f).f()
+            val c1 = center[1].f()
             canvas.save()
             canvas.translate(c0, c1)
             canvas.rotate(90f * (i / 2))
@@ -227,7 +294,24 @@ class YgoCardView : AppCompatImageView {
      * 绘制卡包。
      */
     private fun drawBag(canvas: Canvas, info: CardInfo) {
-
+        val password = "EP19-JP001"
+        val typeface = passwordTf
+        val textPaint = bagPaint
+        val pos = when (info.z) {
+            1 -> CardBag.linkPosition
+            2 -> CardBag.pendulumPosition
+            else -> CardBag.position
+        }
+        val size = CardBag.fontSize.f()
+        val x = pos[0].f()
+        val y = pos[1].f()
+        textPaint.color = Color.BLACK
+        textPaint.textSize = size
+        textPaint.typeface = typeface
+        textPaint.isAntiAlias = true
+        textPaint.textAlign = if (info.z == 2) Paint.Align.LEFT else Paint.Align.RIGHT
+        canvas.drawText(password, x, y, textPaint)
+        textPaint.reset()
     }
 
     /**
@@ -276,21 +360,53 @@ class YgoCardView : AppCompatImageView {
      * 绘制卡密。
      */
     private fun drawPassword(canvas: Canvas, info: CardInfo) {
-
+        val password = "12345678"
+        val typeface = passwordTf
+        val textPaint = passwordPaint
+        val pos = Password.position
+        val size = Password.fontSize.f()
+        val x = pos[0].f()
+        val y = pos[1].f()
+        textPaint.color = Color.BLACK
+        textPaint.textSize = size
+        textPaint.typeface = typeface
+        textPaint.isAntiAlias = true
+        textPaint.textAlign = Paint.Align.LEFT
+        canvas.drawText(password, x, y, textPaint)
+        textPaint.reset()
     }
 
     /**
      * 绘制版权。
      */
     private fun drawCopyright(canvas: Canvas, info: CardInfo) {
-
+        val copyright = "ⓒスタジオ·ダイス /集英社·テレビ東京·KONAMI"
+        val typeface = copyrightTf
+        val textPaint = copyrightPaint
+        val pos = Copyright.position
+        val size = Copyright.fontSize.f()
+        val x = pos[0].f()
+        val y = pos[1].f()
+        textPaint.color = Color.BLACK
+        textPaint.textSize = size
+        textPaint.typeface = typeface
+        textPaint.isAntiAlias = true
+        textPaint.textAlign = Paint.Align.RIGHT
+        canvas.drawText(copyright, x, y, textPaint)
+        textPaint.reset()
     }
 
     /**
      * 绘制防伪标记。
      */
     private fun drawHolo(canvas: Canvas, info: CardInfo) {
-
+        val pos = Holo.position
+        val size = Holo.size
+        val holoDrawable = holo
+        val right = pos[0] + size[0]
+        val bottom = pos[1] + size[1]
+        holoDrawable.setBounds(pos[0].d(), pos[1].d(), right.d(), bottom.d())
+        holoDrawable.draw(canvas)
     }
 
 }

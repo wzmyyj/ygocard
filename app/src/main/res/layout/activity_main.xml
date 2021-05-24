@@ -23,7 +23,7 @@
     <top.wzmyyj.ygocard.common.weight.YgoCardView
         android:layout_width="match_parent"
         android:layout_height="500dp"
-        android:layout_margin="40dp"
+        android:layout_margin="0dp"
         android:background="#00bbff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

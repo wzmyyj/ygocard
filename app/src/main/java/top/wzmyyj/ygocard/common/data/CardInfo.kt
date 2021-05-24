@@ -22,4 +22,10 @@ class CardInfo {
         const val MONSTER_TYPE_LJ =1
         const val MONSTER_TYPE_LB =1
     }
+
+    var i=0
+
+    var y=0
+
+    var z=1
 }
