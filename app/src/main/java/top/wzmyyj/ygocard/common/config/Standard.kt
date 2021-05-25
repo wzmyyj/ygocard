@@ -12,8 +12,10 @@ object Standard {
     val moldSize = intArrayOf(813, 1185)
 
     object Pic {
-        val position = intArrayOf(100, 219, 614, 616)
-        val position_lb = intArrayOf(57, 213, 702, 528)
+        val position = intArrayOf(100, 219)
+        val size = intArrayOf(614, 616)
+        val position_lb = intArrayOf(57, 213)
+        val size_lb = intArrayOf(702, 528)
     }
 
     object Attribute {
@@ -28,7 +30,7 @@ object Standard {
     }
 
     object Arrows {
-        val center = intArrayOf(406, 525)
+        val center = floatArrayOf(406.5f, 526.5f)
         val arrow1_size = intArrayOf(140, 41)
         val arrow1_position = intArrayOf(-70, 308)
         val arrow2_size = intArrayOf(70, 70)
@@ -62,11 +64,11 @@ object Standard {
         val linkLabelPosition = intArrayOf(716, 1107)
     }
 
-    object PendulumNumber {
+    object LbNumber {
         const val font = "lbNum"
         const val fontSize = 52
-        val positionLeft = intArrayOf(88, 854)
-        val positionRight = intArrayOf(730, 854)
+        val leftPosition = intArrayOf(88, 854)
+        val rightPosition = intArrayOf(730, 854)
     }
 
     object CardBag {
@@ -95,41 +97,46 @@ object Standard {
         val position = intArrayOf(65, 117)
     }
 
-    object MonsterDesc {
-        const val font = "desc"
-        const val fontSize = 24
-        const val lbFontSize = 22
-        val position = intArrayOf(64, 942)
-        val lbPosition = intArrayOf(128, 770)
-        const val lineHeight = 26
-        const val lbLineHeight = 24.5
-        const val maxLines = 6
-        const val maxWidth = 683
-        const val lbMaxLines = 5
-        const val lbMaxWidth = 556
-    }
 
-    object SpellDesc {
-        const val font = "desc"
-        const val fontSize = 24
-        val position = intArrayOf(66, 915)
-        const val lineHeight = 24
-        const val maxLines = 9
-        const val maxWidth = 683
-    }
-
-    object Race {
+    object MonsterRace {
         const val font = "race"
         const val fontSize = 26
         val position = intArrayOf(53, 915)
         const val maxWidth = 610
     }
 
-    object Type {
+    object MonsterDesc {
+        const val font = "desc"
+        const val fontSize = 24
+        val position = intArrayOf(64, 942)
+        const val lineHeight = 26f
+        const val maxLines = 6
+        const val maxWidth = 683
+    }
+
+    object MonsterLbDesc {
+        const val font = "desc"
+        const val fontSize = 22
+        val position = intArrayOf(128, 770)
+        const val lineHeight = 24.5f
+        const val maxLines = 5
+        const val maxWidth = 556
+    }
+
+    object SpellDesc {
+        const val font = "desc"
+        const val fontSize = 24
+        val position = intArrayOf(66, 915)
+        const val lineHeight = 24f
+        const val maxLines = 9
+        const val maxWidth = 683
+    }
+
+    object SpellType {
         const val font = "type"
         const val fontSize = 48
         val position = intArrayOf(750, 185)
-        val icon = intArrayOf(667, 147)
+        val iconPosition = intArrayOf(667, 147)
         val iconSize = intArrayOf(46, 46)
     }
 
