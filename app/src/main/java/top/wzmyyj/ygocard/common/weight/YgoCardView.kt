@@ -1,12 +1,10 @@
 package top.wzmyyj.ygocard.common.weight
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Typeface
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import top.wzmyyj.ygocard.R
@@ -30,10 +28,7 @@ import top.wzmyyj.ygocard.common.config.Standard.SpellType
 import top.wzmyyj.ygocard.common.config.Standard.Star
 import top.wzmyyj.ygocard.common.config.Standard.moldSize
 import top.wzmyyj.ygocard.common.data.CardInfo
-import java.lang.RuntimeException
-import kotlin.math.ceil
-import kotlin.math.min
-import kotlin.math.roundToInt
+import kotlin.math.*
 
 
 /**
@@ -119,6 +114,13 @@ class YgoCardView : AppCompatImageView {
     private val passwordPaint = Paint()
     private val bagPaint = Paint()
     private val copyrightPaint = Paint()
+
+    private val mTextPaint by lazy {
+//        val paint = TextPaint(Paint.ANTI_ALIAS_FLAG)
+//        paint.density = resources.displayMetrics.density
+//        return@lazy paint
+        TextView(context).paint
+    }
 
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -207,20 +209,14 @@ class YgoCardView : AppCompatImageView {
         textPaint.typeface = typeface
         textPaint.style = Paint.Style.FILL
         textPaint.isAntiAlias = true
-        textPaint.textScaleX = 1f
-        val w = textPaint.measureText(name)
-        if (w > maxW) {
-            val scaleX = (maxW * 100 / w) / 100f
-            textPaint.textScaleX = scaleX
-        }
         val x = pos[0].f()
         val y = pos[1].f()
-        canvas.drawText(name, x, y, textPaint)
+        canvas.fillText(name, x, y, textPaint, maxW)
         if (info.y > 0) {
             textPaint.strokeWidth = 1.f()
             textPaint.color = Color.GRAY
             textPaint.style = Paint.Style.STROKE
-            canvas.drawText(name, x, y, textPaint)
+            canvas.fillText(name, x, y, textPaint, maxW)
         }
     }
 
@@ -374,7 +370,7 @@ class YgoCardView : AppCompatImageView {
      * 绘制怪兽卡类型。
      */
     private fun drawMonsterRace(canvas: Canvas, info: CardInfo) {
-        val name = "【電子界族/鏈接/效果】"
+        val race = "【電子界族/鏈接/效果】"
         val typeface = cnTf
         val textPaint = racePaint
         val pos = MonsterRace.position
@@ -384,15 +380,9 @@ class YgoCardView : AppCompatImageView {
         textPaint.textSize = size
         textPaint.typeface = typeface
         textPaint.isAntiAlias = true
-        textPaint.textScaleX = 1f
-        val w = textPaint.measureText(name)
-        if (w > maxW) {
-            val scaleX = (maxW * 100 / w) / 100f
-            textPaint.textScaleX = scaleX
-        }
         val x = pos[0].f()
         val y = pos[1].f()
-        canvas.drawText(name, x, y, textPaint)
+        canvas.fillText(race, x, y, textPaint, maxW)
     }
 
     /**
@@ -410,7 +400,6 @@ class YgoCardView : AppCompatImageView {
         val atkLabelPos = ATK.labelPosition
         val atkSize = ATK.fontSize.f()
         textPaint.textSize = atkSize
-        textPaint.textScaleX = 1f
         val x1 = atkLabelPos[0].f()
         val y1 = atkLabelPos[1].f()
         canvas.drawText(atkLabel, x1, y1, textPaint)
@@ -420,21 +409,16 @@ class YgoCardView : AppCompatImageView {
         val atkNumberSize = ATK.fontSize.f()
         val atkNumberMaxW = ATK.maxWidth.f()
         textPaint.textSize = atkNumberSize
-        val w1 = textPaint.measureText(atkNumber)
-        if (w1 > atkNumberMaxW) {
-            val scaleX = (atkNumberMaxW * 100 / w1) / 100f
-            textPaint.textScaleX = scaleX
-        }
         val x2 = atkNumberPos[0].f()
         val y2 = atkNumberPos[1].f()
         canvas.drawText(atkNumber, x2, y2, textPaint)
+        canvas.fillText(atkNumber, x2, y2, textPaint, atkNumberMaxW)
         if (info.m != 2) {
             // 绘制 DEF/
             val defLabel = DEF.label
             val defLabelPos = DEF.labelPosition
             val defSize = DEF.fontSize.f()
             textPaint.textSize = defSize
-            textPaint.textScaleX = 1f
             val x3 = defLabelPos[0].f()
             val y3 = defLabelPos[1].f()
             canvas.drawText(defLabel, x3, y3, textPaint)
@@ -442,14 +426,9 @@ class YgoCardView : AppCompatImageView {
             val defNumber = "3000"
             val defNumberPos = DEF.position
             val defNumberMaxW = DEF.maxWidth.f()
-            val w2 = textPaint.measureText(defNumber)
-            if (w2 > defNumberMaxW) {
-                val scaleX = (defNumberMaxW * 100 / w2) / 100f
-                textPaint.textScaleX = scaleX
-            }
             val x4 = defNumberPos[0].f()
             val y4 = defNumberPos[1].f()
-            canvas.drawText(defNumber, x4, y4, textPaint)
+            canvas.fillText(defNumber, x4, y4, textPaint, defNumberMaxW)
         } else {
             // 绘制 LINK-
             val linkTypeface = linkTf
@@ -518,8 +497,6 @@ class YgoCardView : AppCompatImageView {
         }
     }
 
-    private val tempDescList = ArrayList<String>()
-
     private var tempLbDesc = ""
     private var tempMonsterDesc = ""
     private var tempSpellDesc = ""
@@ -543,7 +520,7 @@ class YgoCardView : AppCompatImageView {
         val size = MonsterLbDesc.fontSize.f()
         val pos = MonsterDesc.position
         val lineHeight = MonsterLbDesc.lineHeight
-        val maxWidth = MonsterLbDesc.maxWidth.d()
+        val maxWidth = MonsterLbDesc.maxWidth.f()
         val maxLines = MonsterLbDesc.maxLines
         textPaint.color = Color.BLACK
         textPaint.textSize = size
@@ -558,10 +535,9 @@ class YgoCardView : AppCompatImageView {
         for (i in descList.indices) {
             val para = descList[i]
             val scale = scaleList[i]
-            textPaint.textScaleX = scale
             val x = pos[0].f()
             val y = (pos[1] + i * lineHeight).f()
-            canvas.drawText(para, x, y, textPaint)
+            canvas.fillText(para, x, y, textPaint, maxWidth, scale)
         }
     }
 
@@ -573,11 +549,11 @@ class YgoCardView : AppCompatImageView {
         val descList = tempMonsterDescList
         val scaleList = tempMonsterScaleList
         val typeface = cnTf
-        val textPaint = descPaint
+        val textPaint = mTextPaint
         val size = MonsterDesc.fontSize.f()
         val pos = MonsterDesc.position
         val lineHeight = MonsterDesc.lineHeight
-        val maxWidth = MonsterDesc.maxWidth.d()
+        val maxWidth = MonsterDesc.maxWidth.f()
         val maxLines = MonsterDesc.maxLines
         textPaint.color = Color.BLACK
         textPaint.textSize = size
@@ -592,10 +568,9 @@ class YgoCardView : AppCompatImageView {
         for (i in descList.indices) {
             val para = descList[i]
             val scale = scaleList[i]
-            textPaint.textScaleX = scale
             val x = pos[0].f()
             val y = (pos[1] + i * lineHeight).f()
-            canvas.drawText(para, x, y, textPaint)
+            canvas.fillText(para, x, y, textPaint, maxWidth, scale)
         }
     }
 
@@ -612,7 +587,7 @@ class YgoCardView : AppCompatImageView {
         val size = SpellDesc.fontSize.f()
         val pos = SpellDesc.position
         val lineHeight = SpellDesc.lineHeight
-        val maxWidth = SpellDesc.maxWidth.d()
+        val maxWidth = SpellDesc.maxWidth.f()
         val maxLines = SpellDesc.maxLines
         textPaint.color = Color.BLACK
         textPaint.textSize = size
@@ -627,22 +602,19 @@ class YgoCardView : AppCompatImageView {
         for (i in descList.indices) {
             val para = descList[i]
             val scale = scaleList[i]
-            textPaint.textScaleX = scale
             val x = pos[0].f()
             val y = (pos[1] + i * lineHeight).f()
-            canvas.drawText(para, x, y, textPaint)
+            canvas.fillText(para, x, y, textPaint, maxWidth, scale)
         }
     }
-
 
     /**
      * 对描述分割换行。
      */
     private fun descSplit(
         desc: String, descList: ArrayList<String>, scaleList: ArrayList<Float>,
-        paint: Paint, maxLines: Int, maxWidth: Int
+        paint: Paint, maxLines: Int, maxWidth: Float
     ) {
-        paint.textScaleX = 1f
         // 根据'\n'分割。
         val tempList = desc.split('\n').toMutableList()
         // 超出的段数压到最后一行。
@@ -650,6 +622,7 @@ class YgoCardView : AppCompatImageView {
             tempList[maxLines - 1] += tempList.last()
             tempList.removeLast()
         }
+        tempList.removeAll { it.isEmpty() }
         // 每段占几行。
         val tempLinesArray = IntArray(tempList.size)
         // 如果全部一样放缩，能够显示得下的临界Scale。
@@ -669,79 +642,53 @@ class YgoCardView : AppCompatImageView {
             val line = tempLinesArray[i]
             if (line == 1) {// 只给一行显示。
                 val w = paint.measureText(para)
-                val scaleX = if (w > maxWidth) (maxWidth * 100 / w) / 100f else 1f
+                val scaleX = if (w > maxWidth) -1f else 1f
                 descList.add(para)
                 scaleList.add(scaleX)
-            } else {// 需要分割。
+            } else if (line > 1) {// 需要分割。
                 val w = paint.measureText(para)
-                val scaleX = if (w > line * maxWidth) (line * maxWidth * 100 / w) / 100f else 1f
+                val hasWidth = line * maxWidth
+                val scaleX = if (w > hasWidth) (hasWidth / w) else 1f
                 val len = para.length
                 val oneF = len / line
                 var start = 0
                 var end = oneF
-                var ts = ""
-                while (true) {
-                    var q = 0
+                val py = paint.textSize * scaleX / 5
+                for (li in 0 until line) {
                     // 找分割的位置。
+                    var minX = w
+                    var pEnd = end
                     while (end < len) {
-                        ts = para.substring(start, end)
-                        val tw = paint.measureText(ts) * scaleX
-                        if (tw > maxWidth) {
-                            if (q == 2) break
-                            q = 1
-                            end--
-                        } else {
-                            if (q == 1) break
-                            q = 2
-                            end++
-                        }
+                        val pE = para.getOrNull(pEnd)
+                        if (pE == '。' || pE == '，' || pE == '：') pEnd++
+                        val tw = paint.measureText(para, start, pEnd) * scaleX
+                        val mX = abs(tw - maxWidth - py)
+                        if (minX > mX) {
+                            minX = mX
+                            end = pEnd
+                        } else break
+                        if (tw > maxWidth) pEnd-- else pEnd++
                     }
-                    // 处理句号等开头。
-                    if (q == 2) {
-                        if (ts.last() == '。') {// 重新计算缩放比。
-                            val ww = paint.measureText(ts)
-                            val scaleXX = if (ww > maxWidth) (maxWidth * 100 / ww) / 100f else 1f
-                            descList.add(ts)
-                            scaleList.add(scaleXX)
-                        } else {
-                            end--
-                            val ss = ts.substring(0, ts.length)
-                            val ww = paint.measureText(ss)
-                            val scaleXX = if (ww > maxWidth) (maxWidth * 100 / ww) / 100f else 1f
-                            descList.add(ss)
-                            scaleList.add(scaleX)
-                        }
-                    } else if (q == 1) {
-                        val pE = para.getOrNull(end)
-                        if (pE == '。') {// 重新计算缩放比。
-                            end++
-                            val ss = ts + pE
-                            val ww = paint.measureText(ss)
-                            val scaleXX = if (ww > maxWidth) (maxWidth * 100 / ww) / 100f else 1f
-                            descList.add(ss)
-                            scaleList.add(scaleXX)
-                        } else {
-                            val ww = paint.measureText(ts)
-                            val scaleXX = if (ww > maxWidth) (maxWidth * 100 / ww) / 100f else 1f
-                            descList.add(ts)
-                            scaleList.add(scaleX)
-                        }
-                    } else {
+                    if (li == line - 1) {
                         // 把剩余的加入列表。
-                        ts = para.substring(start, len)
+                        val ts = para.substring(start, len)
                         val ww = paint.measureText(ts)
-                        val scaleXX = if (ww > maxWidth) (maxWidth * 100 / ww) / 100f else 1f
+                        val sww = ww * scaleX
+                        val scaleXX = if (sww > maxWidth) -1f else scaleX
                         descList.add(ts)
                         scaleList.add(scaleXX)
                         break
+                    } else {
+                        val ts = para.substring(start, end)
+                        descList.add(ts)
+                        scaleList.add(-1f)
                     }
-                    start = min(len - 1, end + 1)
+                    start = min(len - 1, end)
                     end = start + oneF
                 }
             }
         }
     }
-
 
     /**
      * 绘制卡包。
@@ -820,6 +767,24 @@ class YgoCardView : AppCompatImageView {
         val bottom = (pos[1] + size[1]).d()
         holoDrawable.setBounds(left, top, right, bottom)
         holoDrawable.draw(canvas)
+    }
+
+
+    /**
+     * 绘制文字在限制区域内。
+     */
+    private fun Canvas.fillText(
+        para: String, x: Float, y: Float,
+        paint: Paint, width: Float, scX: Float = 1f
+    ) {
+        val canvas = this
+        val w = paint.measureText(para)
+        val h = width / w
+        val scale = if (scX < h && scX > 0f) scX else h
+        canvas.save()
+        canvas.scale(scale, 1f, x, y)
+        canvas.drawText(para, x, y, paint)
+        canvas.restore()
     }
 
 }
