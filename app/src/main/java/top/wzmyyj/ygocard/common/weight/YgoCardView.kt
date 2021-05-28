@@ -115,14 +115,6 @@ class YgoCardView : AppCompatImageView {
     private val bagPaint = Paint()
     private val copyrightPaint = Paint()
 
-    private val mTextPaint by lazy {
-//        val paint = TextPaint(Paint.ANTI_ALIAS_FLAG)
-//        paint.density = resources.displayMetrics.density
-//        return@lazy paint
-        TextView(context).paint
-    }
-
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = MeasureSpec.getSize(widthMeasureSpec)
         if (width > 0) {
@@ -549,7 +541,7 @@ class YgoCardView : AppCompatImageView {
         val descList = tempMonsterDescList
         val scaleList = tempMonsterScaleList
         val typeface = cnTf
-        val textPaint = mTextPaint
+        val textPaint = descPaint
         val size = MonsterDesc.fontSize.f()
         val pos = MonsterDesc.position
         val lineHeight = MonsterDesc.lineHeight
