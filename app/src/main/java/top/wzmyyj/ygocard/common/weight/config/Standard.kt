@@ -1,4 +1,4 @@
-package top.wzmyyj.ygocard.common.config
+package top.wzmyyj.ygocard.common.weight.config
 
 /**
  * Created on 2021/05/18.
@@ -16,6 +16,12 @@ object Standard {
         val size = intArrayOf(614, 616)
         val position_lb = intArrayOf(57, 213)
         val size_lb = intArrayOf(702, 528)
+        const val flatRatio = 1.8f
+    }
+
+    object Mask {
+        val position = intArrayOf(47, 735)
+        val size = intArrayOf(719, 391)
     }
 
     object Attribute {
@@ -67,8 +73,8 @@ object Standard {
     object LbNumber {
         const val font = "lbNum"
         const val fontSize = 52
-        val leftPosition = intArrayOf(88, 854)
-        val rightPosition = intArrayOf(730, 854)
+        val leftPosition = intArrayOf(86, 854)
+        val rightPosition = intArrayOf(729, 854)
     }
 
     object CardBag {
@@ -116,7 +122,7 @@ object Standard {
 
     object MonsterLbDesc {
         const val font = "desc"
-        const val fontSize = 22
+        const val fontSize = 23
         val position = intArrayOf(128, 770)
         const val lineHeight = 24.5f
         const val maxLines = 5

@@ -2,34 +2,36 @@ package top.wzmyyj.ygocard.common.weight
 
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import top.wzmyyj.ygocard.R
-import top.wzmyyj.ygocard.common.config.Standard.ATK
-import top.wzmyyj.ygocard.common.config.Standard.Arrows
-import top.wzmyyj.ygocard.common.config.Standard.Attribute
-import top.wzmyyj.ygocard.common.config.Standard.CardBag
-import top.wzmyyj.ygocard.common.config.Standard.Copyright
-import top.wzmyyj.ygocard.common.config.Standard.DEF
-import top.wzmyyj.ygocard.common.config.Standard.Holo
-import top.wzmyyj.ygocard.common.config.Standard.LbNumber
-import top.wzmyyj.ygocard.common.config.Standard.Line
-import top.wzmyyj.ygocard.common.config.Standard.MonsterDesc
-import top.wzmyyj.ygocard.common.config.Standard.MonsterLbDesc
-import top.wzmyyj.ygocard.common.config.Standard.MonsterRace
-import top.wzmyyj.ygocard.common.config.Standard.Name
-import top.wzmyyj.ygocard.common.config.Standard.Password
-import top.wzmyyj.ygocard.common.config.Standard.Pic
-import top.wzmyyj.ygocard.common.config.Standard.SpellDesc
-import top.wzmyyj.ygocard.common.config.Standard.SpellType
-import top.wzmyyj.ygocard.common.config.Standard.Star
-import top.wzmyyj.ygocard.common.config.Standard.moldSize
-import top.wzmyyj.ygocard.common.data.CardInfo
+import top.wzmyyj.ygocard.common.weight.config.Standard.ATK
+import top.wzmyyj.ygocard.common.weight.config.Standard.Arrows
+import top.wzmyyj.ygocard.common.weight.config.Standard.Attribute
+import top.wzmyyj.ygocard.common.weight.config.Standard.CardBag
+import top.wzmyyj.ygocard.common.weight.config.Standard.Copyright
+import top.wzmyyj.ygocard.common.weight.config.Standard.DEF
+import top.wzmyyj.ygocard.common.weight.config.Standard.Holo
+import top.wzmyyj.ygocard.common.weight.config.Standard.LbNumber
+import top.wzmyyj.ygocard.common.weight.config.Standard.Line
+import top.wzmyyj.ygocard.common.weight.config.Standard.Mask
+import top.wzmyyj.ygocard.common.weight.config.Standard.MonsterDesc
+import top.wzmyyj.ygocard.common.weight.config.Standard.MonsterLbDesc
+import top.wzmyyj.ygocard.common.weight.config.Standard.MonsterRace
+import top.wzmyyj.ygocard.common.weight.config.Standard.Name
+import top.wzmyyj.ygocard.common.weight.config.Standard.Password
+import top.wzmyyj.ygocard.common.weight.config.Standard.Pic
+import top.wzmyyj.ygocard.common.weight.config.Standard.SpellDesc
+import top.wzmyyj.ygocard.common.weight.config.Standard.SpellType
+import top.wzmyyj.ygocard.common.weight.config.Standard.Star
+import top.wzmyyj.ygocard.common.weight.config.Standard.moldSize
+import top.wzmyyj.ygocard.common.weight.data.CardInfo
+import top.wzmyyj.ygocard.common.weight.manger.CardDrawableManager
+import top.wzmyyj.ygocard.common.weight.manger.CardFontManager
 import kotlin.math.*
-
 
 /**
  * Created on 2021/05/18.
@@ -70,32 +72,20 @@ class YgoCardView : AppCompatImageView {
         return this * scaleD
     }
 
+    private val cdManager by lazy { CardDrawableManager(context) }
+    private val cfManager by lazy { CardFontManager(context) }
+
+
     private val aoj by lazy { ContextCompat.getDrawable(context, R.drawable.aoj)!! }
-    private val fd by lazy { ContextCompat.getDrawable(context, R.drawable.c_f_monster_xg)!! }
-    private val ad by lazy { ContextCompat.getDrawable(context, R.drawable.c_a_cn_light)!! }
 
-    private val level by lazy { ContextCompat.getDrawable(context, R.drawable.c_star_level)!! }
-    private val rank by lazy { ContextCompat.getDrawable(context, R.drawable.c_star_rank)!! }
-
-    private val arrow10 by lazy { ContextCompat.getDrawable(context, R.drawable.c_arrow1_0)!! }
-    private val arrow11 by lazy { ContextCompat.getDrawable(context, R.drawable.c_arrow1_1)!! }
-    private val arrow20 by lazy { ContextCompat.getDrawable(context, R.drawable.c_arrow2_0)!! }
-    private val arrow21 by lazy { ContextCompat.getDrawable(context, R.drawable.c_arrow2_1)!! }
-
-    private val spellIcon by lazy { ContextCompat.getDrawable(context, R.drawable.c_icon_sg)!! }
-
-    private val holo by lazy { ContextCompat.getDrawable(context, R.drawable.c_holo_black)!! }
 
     private val cnTf by lazy { Typeface.createFromAsset(resources.assets, "fonts/cn.ttf") }
     private val numberTf by lazy { Typeface.createFromAsset(resources.assets, "fonts/number.ttf") }
     private val linkTf by lazy { Typeface.createFromAsset(resources.assets, "fonts/link.ttf") }
-    private val raceTf by lazy { Typeface.createFromAsset(resources.assets, "fonts/race.ttf") }
+//    private val lbMarkTf by lazy { Typeface.createFromAsset(resources.assets, "fonts/atk_def.ttf") }
 
     private val passwordTf by lazy {
-        Typeface.createFromAsset(
-            resources.assets,
-            "fonts/password.ttf"
-        )
+        Typeface.createFromAsset(resources.assets, "fonts/password.ttf")
     }
     private val copyrightTf by lazy {
         Typeface.createFromAsset(
@@ -147,15 +137,16 @@ class YgoCardView : AppCompatImageView {
      * 绘制怪兽卡。
      */
     private fun drawMonster(canvas: Canvas, info: CardInfo) {
-        if (info.t != 0) return
+        if (!info.isMonster()) return
         drawFrame(canvas, info)
         drawName(canvas, info)
         drawAttribute(canvas, info)
         drawImage(canvas, info)
+        drawLbMask(canvas, info)
         drawLevel(canvas, info)
         drawRank(canvas, info)
         drawLinkArrow(canvas, info)
-        drawLbNumber(canvas, info)
+        drawLbMark(canvas, info)
         drawLbDesc(canvas, info)
         drawMonsterRace(canvas, info)
         drawMonsterDesc(canvas, info)
@@ -166,7 +157,7 @@ class YgoCardView : AppCompatImageView {
      * 绘制魔法卡或陷阱卡。
      */
     private fun drawSpellOrTrap(canvas: Canvas, info: CardInfo) {
-        if (info.t == 0) return
+        if (info.isMonster()) return
         drawFrame(canvas, info)
         drawName(canvas, info)
         drawAttribute(canvas, info)
@@ -179,7 +170,7 @@ class YgoCardView : AppCompatImageView {
      * 绘制框框。
      */
     private fun drawFrame(canvas: Canvas, info: CardInfo) {
-        val frameDrawable = fd
+        val frameDrawable = cdManager.getFrame(info)
         val right = moldSize[0].d()
         val bottom = moldSize[1].d()
         frameDrawable.setBounds(0, 0, right, bottom)
@@ -190,13 +181,14 @@ class YgoCardView : AppCompatImageView {
      * 绘制名称。
      */
     private fun drawName(canvas: Canvas, info: CardInfo) {
-        val name = "雙穹之騎士 阿斯特拉姆"
+        val name = info.name
+        if (name.isEmpty()) return
         val typeface = cnTf
         val textPaint = namePaint
         val pos = Name.position
         val size = Name.fontSize.f()
         val maxW = Name.maxWidth.f()
-        textPaint.color = Color.BLACK
+        textPaint.color = info.nameColor
         textPaint.textSize = size
         textPaint.typeface = typeface
         textPaint.style = Paint.Style.FILL
@@ -204,7 +196,7 @@ class YgoCardView : AppCompatImageView {
         val x = pos[0].f()
         val y = pos[1].f()
         canvas.fillText(name, x, y, textPaint, maxW)
-        if (info.y > 0) {
+        if (info.isSynchro() && info.nameColor != Color.BLACK) {
             textPaint.strokeWidth = 1.f()
             textPaint.color = Color.GRAY
             textPaint.style = Paint.Style.STROKE
@@ -216,30 +208,48 @@ class YgoCardView : AppCompatImageView {
      * 绘制图面。
      */
     private fun drawImage(canvas: Canvas, info: CardInfo) {
-        val imageDrawable = aoj
+        val imageDrawable = aoj as BitmapDrawable
         val pos: IntArray
         val size: IntArray
-        if (info.m == 1 && info.t == 0) {
+        if (info.isMonster() && info.isPendulum()) {
             pos = Pic.position_lb
             size = Pic.size_lb
         } else {
             pos = Pic.position
             size = Pic.size
         }
+        val bitmap = imageDrawable.bitmap
+        val isFlat = 1f * bitmap.width / bitmap.height > Pic.flatRatio
+        val height = if (isFlat) size[1] else size[0]
         val left = pos[0].d()
         val top = pos[1].d()
         val right = (pos[0] + size[0]).d()
-        val bottom = (pos[1] + size[1]).d()
+        val bottom = (pos[1] + height).d()
         imageDrawable.setBounds(left, top, right, bottom)
         imageDrawable.draw(canvas)
     }
 
+    /**
+     * 绘制灵摆遮罩。
+     */
+    private fun drawLbMask(canvas: Canvas, info: CardInfo) {
+        if (!info.isPendulum()) return
+        val pos = Mask.position
+        val size = Mask.size
+        val maskDrawable = cdManager.getLbMask()
+        val left = pos[0].d()
+        val top = pos[1].d()
+        val right = (pos[0] + size[0]).d()
+        val bottom = (pos[1] + size[1]).d()
+        maskDrawable.setBounds(left, top, right, bottom)
+        maskDrawable.draw(canvas)
+    }
 
     /**
      * 绘制属性。
      */
     private fun drawAttribute(canvas: Canvas, info: CardInfo) {
-        val attributeDrawable = ad
+        val attributeDrawable = cdManager.getAttribute(info)
         val pos = Attribute.position
         val size = Attribute.size
         val left = pos[0].d()
@@ -254,10 +264,10 @@ class YgoCardView : AppCompatImageView {
      * 绘制等级。
      */
     private fun drawLevel(canvas: Canvas, info: CardInfo) {
-        if (info.m == 3 || info.m == 2) return
-        val lv = 4
+        if (info.isLink() || info.isXYZ()) return
+        val lv = info.level
         if (lv > 13 || lv <= 0) return
-        val levelDrawable = level
+        val levelDrawable = cdManager.getLevel()
         val pos = Star.position
         val size = Star.size
         val distance = Star.distance
@@ -276,10 +286,10 @@ class YgoCardView : AppCompatImageView {
      * 绘制阶级。
      */
     private fun drawRank(canvas: Canvas, info: CardInfo) {
-        if (info.m != 3) return
-        val rk = 4
+        if (!info.isXYZ()) return
+        val rk = info.rank
         if (rk > 13 || rk <= 0) return
-        val rankDrawable = rank
+        val rankDrawable = cdManager.getRank()
         val pos = Star.position
         val size = Star.size
         val distance = Star.distance
@@ -298,12 +308,9 @@ class YgoCardView : AppCompatImageView {
      * 绘制连接箭头。
      */
     private fun drawLinkArrow(canvas: Canvas, info: CardInfo) {
-        if (info.m != 2) return
+        if (!info.isLink()) return
         val arr = arrayOf(0, 1, 1, 0, 0, 0, 1, 1)
-        val arrow10Drawable = arrow10
-        val arrow11Drawable = arrow11
-        val arrow20Drawable = arrow20
-        val arrow21Drawable = arrow21
+        val linkArrows = cdManager.getLinkArrows()
         for ((i, v) in arr.withIndex()) {
             val pos: IntArray
             val size: IntArray
@@ -311,11 +318,11 @@ class YgoCardView : AppCompatImageView {
             if (i % 2 == 0) {
                 pos = Arrows.arrow1_position
                 size = Arrows.arrow1_size
-                arrowDrawable = if (v == 0) arrow10Drawable else arrow11Drawable
+                arrowDrawable = if (v == 0) linkArrows[0] else linkArrows[1]
             } else {
                 pos = Arrows.arrow2_position
                 size = Arrows.arrow2_size
-                arrowDrawable = if (v == 0) arrow20Drawable else arrow21Drawable
+                arrowDrawable = if (v == 0) linkArrows[2] else linkArrows[3]
             }
             val left = pos[0].d()
             val top = pos[1].d()
@@ -337,9 +344,9 @@ class YgoCardView : AppCompatImageView {
     /**
      * 绘制灵摆刻度。
      */
-    private fun drawLbNumber(canvas: Canvas, info: CardInfo) {
-        if (info.m != 1) return
-        val number = "10"
+    private fun drawLbMark(canvas: Canvas, info: CardInfo) {
+        if (!info.isPendulum()) return
+        val number = "20"
         val typeface = numberTf
         val textPaint = lpNumberPaint
         val size = LbNumber.fontSize.f()
@@ -362,7 +369,8 @@ class YgoCardView : AppCompatImageView {
      * 绘制怪兽卡类型。
      */
     private fun drawMonsterRace(canvas: Canvas, info: CardInfo) {
-        val race = "【電子界族/鏈接/效果】"
+        val race = info.getRace()
+        if (race.isEmpty()) return
         val typeface = cnTf
         val textPaint = racePaint
         val pos = MonsterRace.position
@@ -405,7 +413,7 @@ class YgoCardView : AppCompatImageView {
         val y2 = atkNumberPos[1].f()
         canvas.drawText(atkNumber, x2, y2, textPaint)
         canvas.fillText(atkNumber, x2, y2, textPaint, atkNumberMaxW)
-        if (info.m != 2) {
+        if (!info.isLink()) {
             // 绘制 DEF/
             val defLabel = DEF.label
             val defLabelPos = DEF.labelPosition
@@ -461,10 +469,10 @@ class YgoCardView : AppCompatImageView {
         textPaint.typeface = typeface
         textPaint.isAntiAlias = true
         textPaint.textAlign = Paint.Align.RIGHT
-        if (info.s == 1) {
+        if (info.hasSpellIcon()) {
             val iconPos = SpellType.iconPosition
             val iconSize = SpellType.iconSize
-            val iconDrawable = spellIcon
+            val iconDrawable = cdManager.getSpellIcon(info)
             val left = iconPos[0].d()
             val top = iconPos[1].d()
             val right = (iconPos[0] + iconSize[0]).d()
@@ -503,14 +511,15 @@ class YgoCardView : AppCompatImageView {
      * 绘制灵摆效果。
      */
     private fun drawLbDesc(canvas: Canvas, info: CardInfo) {
-        if (info.i == 0) return
+        if (!info.isPendulum()) return
         val desc = info.lbDesc
+        if (desc.isEmpty()) return
         val descList = tempLbDescList
         val scaleList = tempLbScaleList
         val typeface = cnTf
         val textPaint = descPaint
         val size = MonsterLbDesc.fontSize.f()
-        val pos = MonsterDesc.position
+        val pos = MonsterLbDesc.position
         val lineHeight = MonsterLbDesc.lineHeight
         val maxWidth = MonsterLbDesc.maxWidth.f()
         val maxLines = MonsterLbDesc.maxLines
@@ -537,7 +546,8 @@ class YgoCardView : AppCompatImageView {
      * 绘制效果。
      */
     private fun drawMonsterDesc(canvas: Canvas, info: CardInfo) {
-        val desc = info.monsterDesc
+        val desc = info.desc
+        if (desc.isEmpty()) return
         val descList = tempMonsterDescList
         val scaleList = tempMonsterScaleList
         val typeface = cnTf
@@ -554,7 +564,7 @@ class YgoCardView : AppCompatImageView {
         textPaint.textAlign = Paint.Align.LEFT
         if (tempMonsterDesc != desc) {
             descSplit(desc, descList, scaleList, textPaint, maxLines, maxWidth)
-//            tempMonsterDesc = desc
+            tempMonsterDesc = desc
         }
         if (descList.size != scaleList.size) throw RuntimeException("error")
         for (i in descList.indices) {
@@ -570,8 +580,9 @@ class YgoCardView : AppCompatImageView {
      * 绘制魔法陷阱效果。
      */
     private fun drawSpellOrTrapDesc(canvas: Canvas, info: CardInfo) {
-        if (info.i == 0) return
-        val desc = info.spellDesc
+        if (info.isMonster()) return
+        val desc = info.desc
+        if (desc.isEmpty()) return
         val descList = tempSpellDescList
         val scaleList = tempSpellScaleList
         val typeface = cnTf
@@ -686,7 +697,8 @@ class YgoCardView : AppCompatImageView {
      * 绘制卡包。
      */
     private fun drawBag(canvas: Canvas, info: CardInfo) {
-        val password = "EP19-JP001"
+        val bag = info.bag
+        if (bag.isEmpty()) return
         val typeface = passwordTf
         val textPaint = bagPaint
         val size = CardBag.fontSize.f()
@@ -696,23 +708,24 @@ class YgoCardView : AppCompatImageView {
         textPaint.isAntiAlias = true
         textPaint.textAlign = Paint.Align.RIGHT
         val pos = when {
-            info.t == 0 && info.m == 1 -> {
+            info.isMonster() && info.isPendulum() -> {
                 textPaint.textAlign = Paint.Align.LEFT
                 CardBag.pendulumPosition
             }
-            info.t == 0 && info.m == 2 -> CardBag.linkPosition
+            info.isMonster() && info.isLink() -> CardBag.linkPosition
             else -> CardBag.position
         }
         val x = pos[0].f()
         val y = pos[1].f()
-        canvas.drawText(password, x, y, textPaint)
+        canvas.drawText(bag, x, y, textPaint)
     }
 
     /**
      * 绘制卡密。
      */
     private fun drawPassword(canvas: Canvas, info: CardInfo) {
-        val password = "12345678"
+        val password = info.password
+        if (password.isEmpty()) return
         val typeface = passwordTf
         val textPaint = passwordPaint
         val size = Password.fontSize.f()
@@ -731,7 +744,8 @@ class YgoCardView : AppCompatImageView {
      * 绘制版权。
      */
     private fun drawCopyright(canvas: Canvas, info: CardInfo) {
-        val copyright = "ⓒスタジオ·ダイス /集英社·テレビ東京·KONAMI"
+        val copyright = info.copyright
+        if (copyright.isEmpty()) return
         val typeface = copyrightTf
         val textPaint = copyrightPaint
         val size = Copyright.fontSize.f()
@@ -750,9 +764,10 @@ class YgoCardView : AppCompatImageView {
      * 绘制防伪标记。
      */
     private fun drawHolo(canvas: Canvas, info: CardInfo) {
+        if (!info.showHolo) return
         val pos = Holo.position
         val size = Holo.size
-        val holoDrawable = holo
+        val holoDrawable = cdManager.getHolo()
         val left = pos[0].d()
         val top = pos[1].d()
         val right = (pos[0] + size[0]).d()
