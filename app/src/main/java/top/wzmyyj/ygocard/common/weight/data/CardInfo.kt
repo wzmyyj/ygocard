@@ -25,6 +25,22 @@ class CardInfo {
         const val MONSTER_TYPE_LB = 1
     }
 
+    object CardType{
+        const val MONSTER = 0
+        const val SPELL = 1
+        const val TRAP = 2
+    }
+
+    object MonsterType{
+        const val TC = 0
+        const val XG = 1
+        const val YS = 1
+        const val RH = 1
+        const val TT = 1
+        const val LJ = 1
+        const val LB = 1
+    }
+
 
     var name: String = "奥金魔术师"
     var nameColor: Int = Color.BLACK
@@ -36,6 +52,11 @@ class CardInfo {
             "●手卡：从手卡把1只怪兽特殊召唤。" +
             "●卡组：自己从卡组抽2张。" +
             "●额外卡组：选从额外卡组特殊召唤的那1只怪兽破坏。"
+
+    var cardType: Int = CARD_TYPE_MONSTER
+    var monsterType: Int = MONSTER_TYPE_TC
+    var monsterType2: Int = -1
+    var monsterType3: Int = -1
 
     var level: Int = 7
     var rank: Int = 4

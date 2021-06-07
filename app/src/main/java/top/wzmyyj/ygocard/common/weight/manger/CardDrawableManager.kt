@@ -16,9 +16,9 @@ import top.wzmyyj.ygocard.common.weight.data.CardInfo
 class CardDrawableManager(private val context: Context) {
 
     private val _aoj by lazy { ContextCompat.getDrawable(context, R.drawable.aoj)!! }
-    private val _fd by lazy { ContextCompat.getDrawable(context, R.drawable.c_f_monster_xg)!! }
-    private val _fdLb by lazy { ContextCompat.getDrawable(context, R.drawable.c_f_monster_xg_lb)!! }
-    private val _ad by lazy { ContextCompat.getDrawable(context, R.drawable.c_a_cn_light)!! }
+    private val _fd by lazy { ContextCompat.getDrawable(context, R.drawable.c_frame_monster_xg)!! }
+    private val _fdLb by lazy { ContextCompat.getDrawable(context, R.drawable.c_frame_monster_xg_lb)!! }
+    private val _ad by lazy { ContextCompat.getDrawable(context, R.drawable.c_attr_dark)!! }
 
     private val _level by lazy { ContextCompat.getDrawable(context, R.drawable.c_star_level)!! }
     private val _rank by lazy { ContextCompat.getDrawable(context, R.drawable.c_star_rank)!! }
