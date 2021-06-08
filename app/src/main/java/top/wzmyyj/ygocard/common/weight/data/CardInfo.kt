@@ -11,36 +11,58 @@ import android.graphics.Color
  */
 class CardInfo {
 
-    companion object {
-        const val CARD_TYPE_MONSTER = 0
-        const val CARD_TYPE_SPELL = 1
-        const val CARD_TYPE_TRAP = 2
-
-        const val MONSTER_TYPE_TC = 0
-        const val MONSTER_TYPE_XG = 1
-        const val MONSTER_TYPE_YS = 1
-        const val MONSTER_TYPE_RH = 1
-        const val MONSTER_TYPE_TT = 1
-        const val MONSTER_TYPE_LJ = 1
-        const val MONSTER_TYPE_LB = 1
+    object Language {
+        const val TC = 0
+        const val SC = 1
+        const val JP = 2
+        const val EN = 3
+        const val KR = 4
     }
 
-    object CardType{
+    object CardType {
         const val MONSTER = 0
         const val SPELL = 1
         const val TRAP = 2
     }
 
-    object MonsterType{
+    object MonsterType {
         const val TC = 0
         const val XG = 1
-        const val YS = 1
-        const val RH = 1
-        const val TT = 1
-        const val LJ = 1
-        const val LB = 1
+        const val YS = 100
+        const val RH = 200
+        const val TT = 300
+        const val CL = 400
+        const val LB = 50
+        const val LJ = 600
+        const val TK = 1000
     }
 
+    object Attribute {
+        const val MO = -1
+        const val XIAN = -2
+        const val LIGHT = 1
+        const val DARK = 2
+        const val FIRE = 3
+        const val WATER = 4
+        const val EARTH = 5
+        const val WIND = 6
+        const val DIVINE = 7
+    }
+
+    object SpellType {
+        const val ST_TC = 0
+        const val ST_SG = 1
+        const val ST_ZB = 2
+        const val ST_CD = 3
+        const val ST_YX = 4
+        const val ST_YS = 5
+        const val ST_FJ = 6
+    }
+
+    var lang = Language.SC
+
+    var cardType: Int = CardType.MONSTER
+    var monsterTypes: IntArray = intArrayOf(MonsterType.XG, MonsterType.LB, -1)
 
     var name: String = "奥金魔术师"
     var nameColor: Int = Color.BLACK
@@ -53,11 +75,8 @@ class CardInfo {
             "●卡组：自己从卡组抽2张。" +
             "●额外卡组：选从额外卡组特殊召唤的那1只怪兽破坏。"
 
-    var cardType: Int = CARD_TYPE_MONSTER
-    var monsterType: Int = MONSTER_TYPE_TC
-    var monsterType2: Int = -1
-    var monsterType3: Int = -1
 
+    var attr: Int = Attribute.LIGHT
     var level: Int = 7
     var rank: Int = 4
 
@@ -69,31 +88,58 @@ class CardInfo {
 
     var showHolo: Boolean = true
 
+    var spellType: Int = SpellType.ST_TC
+
+    fun isSpell(): Boolean {
+        return cardType == CardType.SPELL
+    }
+
+    fun isTrap(): Boolean {
+        return cardType == CardType.TRAP
+    }
+
     fun isMonster(): Boolean {
-        return true
+        return cardType == CardType.MONSTER
     }
 
     fun isPendulum(): Boolean {
-        return true
+        return isMonster() && monsterTypes.contains(MonsterType.LB)
     }
 
     fun isLink(): Boolean {
-        return false
+        return isMonster() && monsterTypes.contains(MonsterType.LJ)
     }
 
     fun isXYZ(): Boolean {
-        return false
+        return isMonster() && monsterTypes.contains(MonsterType.CL)
     }
 
     fun isSynchro(): Boolean {
-        return false
+        return isMonster() && monsterTypes.contains(MonsterType.TT)
+    }
+
+    fun isFusion(): Boolean {
+        return isMonster() && monsterTypes.contains(MonsterType.RH)
+    }
+
+    fun isRitual(): Boolean {
+        return isMonster() && monsterTypes.contains(MonsterType.YS)
+    }
+
+    fun isToken(): Boolean {
+        return isMonster() && monsterTypes.contains(MonsterType.TK)
+    }
+
+    fun isNormal(): Boolean {
+        return isMonster() && monsterTypes.contains(MonsterType.TC)
     }
 
     fun hasSpellIcon(): Boolean {
-        return true
+        return (isSpell() || isTrap()) && spellType != SpellType.ST_TC
     }
 
     fun getRace(): String {
         return "【電子界族/鏈接/效果】"
     }
+
 }

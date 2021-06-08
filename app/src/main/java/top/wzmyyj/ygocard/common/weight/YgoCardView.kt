@@ -6,8 +6,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.ContextCompat
-import top.wzmyyj.ygocard.R
 import top.wzmyyj.ygocard.common.weight.config.Standard.ATK
 import top.wzmyyj.ygocard.common.weight.config.Standard.Arrows
 import top.wzmyyj.ygocard.common.weight.config.Standard.Attribute
@@ -74,25 +72,6 @@ class YgoCardView : AppCompatImageView {
 
     private val cdManager by lazy { CardDrawableManager(context) }
     private val cfManager by lazy { CardFontManager(context) }
-
-
-    private val aoj by lazy { ContextCompat.getDrawable(context, R.drawable.aoj)!! }
-
-
-    private val cnTf by lazy { Typeface.createFromAsset(resources.assets, "fonts/cn.ttf") }
-    private val numberTf by lazy { Typeface.createFromAsset(resources.assets, "fonts/number.ttf") }
-    private val linkTf by lazy { Typeface.createFromAsset(resources.assets, "fonts/link.ttf") }
-//    private val lbMarkTf by lazy { Typeface.createFromAsset(resources.assets, "fonts/atk_def.ttf") }
-
-    private val passwordTf by lazy {
-        Typeface.createFromAsset(resources.assets, "fonts/password.ttf")
-    }
-    private val copyrightTf by lazy {
-        Typeface.createFromAsset(
-            resources.assets,
-            "fonts/copyright.ttf"
-        )
-    }
 
     private val namePaint = Paint()
     private val racePaint = Paint()
@@ -183,7 +162,7 @@ class YgoCardView : AppCompatImageView {
     private fun drawName(canvas: Canvas, info: CardInfo) {
         val name = info.name
         if (name.isEmpty()) return
-        val typeface = cnTf
+        val typeface = cfManager.getName(info)
         val textPaint = namePaint
         val pos = Name.position
         val size = Name.fontSize.f()
@@ -208,7 +187,7 @@ class YgoCardView : AppCompatImageView {
      * 绘制图面。
      */
     private fun drawImage(canvas: Canvas, info: CardInfo) {
-        val imageDrawable = aoj as BitmapDrawable
+        val imageDrawable = cdManager.getDefaultImage() as BitmapDrawable
         val pos: IntArray
         val size: IntArray
         if (info.isMonster() && info.isPendulum()) {
@@ -347,7 +326,7 @@ class YgoCardView : AppCompatImageView {
     private fun drawLbMark(canvas: Canvas, info: CardInfo) {
         if (!info.isPendulum()) return
         val number = "20"
-        val typeface = numberTf
+        val typeface = cfManager.getNumber()
         val textPaint = lpNumberPaint
         val size = LbNumber.fontSize.f()
         textPaint.color = Color.BLACK
@@ -371,7 +350,7 @@ class YgoCardView : AppCompatImageView {
     private fun drawMonsterRace(canvas: Canvas, info: CardInfo) {
         val race = info.getRace()
         if (race.isEmpty()) return
-        val typeface = cnTf
+        val typeface = cfManager.getDesc(info)
         val textPaint = racePaint
         val pos = MonsterRace.position
         val size = MonsterRace.fontSize.f()
@@ -389,7 +368,7 @@ class YgoCardView : AppCompatImageView {
      * 绘制攻击力防御力。
      */
     private fun drawATKAndDEF(canvas: Canvas, info: CardInfo) {
-        val typeface = numberTf
+        val typeface = cfManager.getNumber()
         val textPaint = atkDefPaint
         textPaint.color = Color.BLACK
         textPaint.typeface = typeface
@@ -431,7 +410,7 @@ class YgoCardView : AppCompatImageView {
             canvas.fillText(defNumber, x4, y4, textPaint, defNumberMaxW)
         } else {
             // 绘制 LINK-
-            val linkTypeface = linkTf
+            val linkTypeface = cfManager.getLink()
             val linkLabel = DEF.linkLabel
             val linkLabelPos = DEF.linkLabelPosition
             val linkSize = DEF.linkFontSize.f()
@@ -461,7 +440,7 @@ class YgoCardView : AppCompatImageView {
      */
     private fun drawSpellOrTrapWithIcon(canvas: Canvas, info: CardInfo) {
         val typeDesc = "魔法卡"
-        val typeface = cnTf
+        val typeface = cfManager.getDesc(info)
         val textPaint = spellPaint
         val size = SpellType.fontSize.f()
         textPaint.color = Color.BLACK
@@ -516,7 +495,7 @@ class YgoCardView : AppCompatImageView {
         if (desc.isEmpty()) return
         val descList = tempLbDescList
         val scaleList = tempLbScaleList
-        val typeface = cnTf
+        val typeface = cfManager.getDesc(info)
         val textPaint = descPaint
         val size = MonsterLbDesc.fontSize.f()
         val pos = MonsterLbDesc.position
@@ -550,7 +529,7 @@ class YgoCardView : AppCompatImageView {
         if (desc.isEmpty()) return
         val descList = tempMonsterDescList
         val scaleList = tempMonsterScaleList
-        val typeface = cnTf
+        val typeface = cfManager.getDesc(info)
         val textPaint = descPaint
         val size = MonsterDesc.fontSize.f()
         val pos = MonsterDesc.position
@@ -585,7 +564,7 @@ class YgoCardView : AppCompatImageView {
         if (desc.isEmpty()) return
         val descList = tempSpellDescList
         val scaleList = tempSpellScaleList
-        val typeface = cnTf
+        val typeface = cfManager.getDesc(info)
         val textPaint = descPaint
         val size = SpellDesc.fontSize.f()
         val pos = SpellDesc.position
@@ -699,7 +678,7 @@ class YgoCardView : AppCompatImageView {
     private fun drawBag(canvas: Canvas, info: CardInfo) {
         val bag = info.bag
         if (bag.isEmpty()) return
-        val typeface = passwordTf
+        val typeface = cfManager.getPassword()
         val textPaint = bagPaint
         val size = CardBag.fontSize.f()
         textPaint.color = Color.BLACK
@@ -726,7 +705,7 @@ class YgoCardView : AppCompatImageView {
     private fun drawPassword(canvas: Canvas, info: CardInfo) {
         val password = info.password
         if (password.isEmpty()) return
-        val typeface = passwordTf
+        val typeface = cfManager.getPassword()
         val textPaint = passwordPaint
         val size = Password.fontSize.f()
         textPaint.color = Color.BLACK
@@ -746,7 +725,7 @@ class YgoCardView : AppCompatImageView {
     private fun drawCopyright(canvas: Canvas, info: CardInfo) {
         val copyright = info.copyright
         if (copyright.isEmpty()) return
-        val typeface = copyrightTf
+        val typeface = cfManager.getCopyright()
         val textPaint = copyrightPaint
         val size = Copyright.fontSize.f()
         textPaint.color = Color.BLACK
@@ -775,7 +754,6 @@ class YgoCardView : AppCompatImageView {
         holoDrawable.setBounds(left, top, right, bottom)
         holoDrawable.draw(canvas)
     }
-
 
     /**
      * 绘制文字在限制区域内。
