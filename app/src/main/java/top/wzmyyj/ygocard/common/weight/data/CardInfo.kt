@@ -59,10 +59,10 @@ class CardInfo {
         const val ST_FJ = 6
     }
 
-    var lang = Language.SC
+    var lang = Language.TC
 
     var cardType: Int = CardType.MONSTER
-    var monsterTypes: IntArray = intArrayOf(MonsterType.XG, MonsterType.LB, -1)
+    var monsterTypes: IntArray = intArrayOf(MonsterType.XG, -1, -1)
 
     var name: String = "奥金魔术师"
     var nameColor: Int = Color.BLACK
@@ -79,6 +79,7 @@ class CardInfo {
     var attr: Int = Attribute.LIGHT
     var level: Int = 7
     var rank: Int = 4
+    var lbMark: Int = 13
 
     var bag: String = "EP19-JP001"
 

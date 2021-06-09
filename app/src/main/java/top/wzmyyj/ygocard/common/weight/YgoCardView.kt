@@ -325,7 +325,9 @@ class YgoCardView : AppCompatImageView {
      */
     private fun drawLbMark(canvas: Canvas, info: CardInfo) {
         if (!info.isPendulum()) return
-        val number = "20"
+        val lbMark = info.lbMark
+        if (lbMark > 13 || lbMark <= 0) return
+        val number = lbMark.toString()
         val typeface = cfManager.getNumber()
         val textPaint = lpNumberPaint
         val size = LbNumber.fontSize.f()
